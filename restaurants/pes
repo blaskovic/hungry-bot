@@ -1,0 +1,57 @@
+#!/bin/bash
+URL="http://www.uhodnyhopsa.cz/"
+tmp=$(mktemp -d)
+
+wget -q "$URL" -O $tmp/index.html
+
+doc=$(grep -i "doc/.*.pdf" $tmp/index.html | head -n 1 | awk -F'"' '{print $2}')
+
+wget -q "$URL/$doc" -O $tmp/pes.pdf
+pdftotext $tmp/pes.pdf
+
+TODAY=$(LC=C date "+%A")
+
+case "$TODAY" in
+Monday)
+    TODAY_CZ="Pondělí"
+    ;;
+Tuesday)
+    TODAY_CZ="Úterý"
+    ;;
+Wednesday)
+    TODAY_CZ="Středa"
+    ;;
+Thursday)
+    TODAY_CZ="Čtvrtek"
+    ;;
+Friday)
+    TODAY_CZ="Pátek"
+    ;;
+*)
+    echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
+    rm -rf "$tmp"
+    exit 0
+esac
+
+grep -A 15 "$TODAY_CZ" "$tmp/pes.txt" > $tmp/day_parsed
+
+while read line
+do
+    # Out of day section
+    echo "$line" | grep -q "___________" 2>/dev/null
+    if [ $? -eq 0 ]
+    then
+        break
+    fi
+
+    # Long enough? Food!
+    if [ ${#line} -gt 6 ]
+    then
+        echo "$line"
+    fi
+
+
+done < "$tmp/day_parsed"
+
+rm -rf "$tmp"
+
