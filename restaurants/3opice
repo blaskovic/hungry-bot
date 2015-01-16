@@ -1,2 +1,2 @@
 #!/bin/env bash
-curl -s https://www.zomato.com/cs/brno/u-3-opic-kr%C3%A1lovo-pole-brno-sever | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g'
+curl -s https://www.zomato.com/cs/brno/u-3-opic-kr%C3%A1lovo-pole-brno-sever/info | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g' | grep -B 10 'Speciální nabídka' | head -n -1
