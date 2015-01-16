@@ -1,2 +1,2 @@
 #!/bin/bash
-curl -s "http://www.kam.vutbr.cz/?p=menu&provoz=10" | grep "<tr id=\"r" | sed -E "s/.+?\)\">([^<]+).*?slcen1\">([0-9]+).*/\2 Kč\t\1/"
+curl -s "http://www.kam.vutbr.cz/?p=menu&provoz=10" | grep "<tr id=\"r" | sed -E "s/.+?\)\">([^<]+).*?slcen1\">([0-9]+).*/\2 Kč \1/"
