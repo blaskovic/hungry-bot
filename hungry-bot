@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Args
+CHANNEL=${CHANNEL:-"##pivo"}
+SERVER=${SERVER:-"irc.freenode.org"}
+NICK=${NICK:-"cobuduzrat"}
+IRCDIR=${IRCDIR:-"ircdir"}
+TMPFILE=$(mktemp)
+
+# ii
+set -x
+make -C ii
+rm -rfv "$IRCDIR/$SERVER"
+set +x
+./ii/ii -i "$IRCDIR" -s "$SERVER" -n "$NICK" &
+sleep 5
+echo "/j $CHANNEL" > "$IRCDIR/$SERVER/in"
+
+sleep 2
+
+# Parser
+echo > "$IRCDIR/$SERVER/$CHANNEL/out"
+tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
+    while read -r date time nick mesg; do
+        nick="${nick#<}"
+        nick="${nick%>}"
+        echo "$mesg" | grep -q ^menu
+        if [ $? -eq 0 ]
+        then
+            # We want menu! # stip whitespace needed!
+            menu=$(echo "$mesg" | sed "s/menu //")
+
+            ls "restaurants/$menu"
+            if [ $? -eq 0 ]
+            then
+                ./restaurants/$menu > "$IRCDIR/$SERVER/$CHANNEL/in"
+            else
+                echo "Nebudes zrat '$menu', neviem ako to parsovat. Patches welcome!" > "$IRCDIR/$SERVER/$CHANNEL/in"
+            fi
+        fi
+    done
+
+
+# End
+rm $TMPFILE
