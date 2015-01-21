@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "U hladnyho psa - nebo tak nejak se to jmenuje"
 URL="http://www.uhodnyhopsa.cz/"
 tmp=$(mktemp -d)
 

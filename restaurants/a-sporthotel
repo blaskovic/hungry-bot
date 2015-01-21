@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "A-sport hotel"
 URL="http://www.a-sporthotel.cz/menu/"
 tmp=$(mktemp -d)
 

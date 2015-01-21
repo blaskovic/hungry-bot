@@ -1,0 +1,27 @@
+#!/bin/bash
+echo "Paladeo"
+TODAY=$(LC=C date "+%A")
+
+case "$TODAY" in
+Monday)
+    TODAY_CZ="pondělí"
+    ;;
+Tuesday)
+    TODAY_CZ="úterý"
+    ;;
+Wednesday)
+    TODAY_CZ="středa"
+    ;;
+Thursday)
+    TODAY_CZ="čtvrtek"
+    ;;
+Friday)
+    TODAY_CZ="pátek"
+    ;;
+*)
+    echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
+    rm -rf "$tmp"
+    exit 0
+esac
+
+curl -s "http://www.paladeo.cz/menu" | grep -A10 "<u>$TODAY_CZ" | sed  's/<[^>]*>//g' | sed 's/^\s*//g' | grep -v '^&' | grep -e '^$' -v 
