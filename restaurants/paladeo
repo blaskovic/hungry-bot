@@ -24,4 +24,4 @@ Friday)
     exit 0
 esac
 
-curl -s "http://www.paladeo.cz/menu" | grep -A10 "<u>$TODAY_CZ" | sed  's/<[^>]*>//g' | sed 's/^\s*//g' | grep -v '^&' | grep -e '^$' -v 
+curl -s "http://www.paladeo.cz/menu" | grep -A10 "[ug]>$TODAY_CZ" | sed  's/<[^>]*>//g' | sed 's/^\s*//g' | grep -v '^&' | grep -e '^$' -v 
