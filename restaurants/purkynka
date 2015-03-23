@@ -1,3 +1,28 @@
-#!/bin/env bash
+#!/bin/bash
 echo "Na Purkynce"
-curl -s https://www.zomato.com/cs/brno/na-purky%C5%88ce-kr%C3%A1lovo-pole-brno-sever/info | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g'
+TODAY=$(LC=C date "+%A")
+
+case "$TODAY" in
+Monday)
+    TODAY_CZ="PONDĚLÍ"
+    ;;
+Tuesday)
+    TODAY_CZ="ÚTERÝ"
+    ;;
+Wednesday)
+    TODAY_CZ="STŘEDA"
+    ;;
+Thursday)
+    TODAY_CZ="ČTVRTEK"
+    ;;
+Friday)
+    TODAY_CZ="PÁTEK"
+    ;;
+*)
+    echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
+    rm -rf "$tmp"
+    exit 0
+esac
+
+PATTERN="/<div>$TODAY_CZ/,/\&nbsp\;/"
+curl -s http://www.napurkynce.cz/denni-menu/ | awk "$PATTERN" | sed 's/<[^>]*>//g' | sed '$d;'
