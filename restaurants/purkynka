@@ -24,4 +24,5 @@ Friday)
     exit 0
 esac
 
-curl -s http://www.napurkynce.cz/denni-menu/ | sed 's/<[^>]*>//g' | grep $TODAY_CZ -A4
+PATTERN="/<div>$TODAY_CZ/,/\&nbsp\;/"
+curl -s http://www.napurkynce.cz/denni-menu/ | awk "$PATTERN" | sed 's/<[^>]*>//g' | sed '$d;'
