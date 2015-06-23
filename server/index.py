@@ -14,5 +14,7 @@ class HungryBot(object):
 
     index.exposed = True
 
+cherrypy.config.update({'server.socket_port': 8099})
+cherrypy.engine.restart()
 cherrypy.quickstart(HungryBot())
 
