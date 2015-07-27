@@ -1,2 +1,3 @@
 #!/bin/env bash
-ls restaurants | grep -v -e '^list$' -e '^ping$' | sed ':a;N;$!ba;s/\n/, /g'
+
+ls $(git rev-parse --show-cdup)restaurants | grep -v -e '^list$' -e '^ping$' | sed ':a;N;$!ba;s/\n/, /g'
