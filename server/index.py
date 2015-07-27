@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import cherrypy
 import os
 import subprocess
