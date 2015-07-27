@@ -1,0 +1,3 @@
+#!/bin/env bash
+echo "Portoriko"
+curl -s https://www.zomato.com/cs/brno/portoriko-kr%C3%A1lovo-pole-brno-sever | awk "/<div class=\"tmi tmi-daily/,/<div class=\"clear\">/" | tr -d '\n\r' | sed 's/clear"><\/div>/\n/g' | sed -r 's/.*?tmi-name">([^<]+?)<\/div>.*?tmi-price">(.+?)<\/div.*?/\1 \2/g' | tr -s ' ' | sed 's/^[[:space:]]//g'
