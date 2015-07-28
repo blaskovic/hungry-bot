@@ -29,5 +29,5 @@ Friday)
     exit 0
 esac
 
-PATTERN="/<span style=\"text-decoration: underline;\">$TODAY_CZ/,/$END_PATTERN/"
+PATTERN="/<div>$TODAY_CZ/,/<div>&nbsp;<\/div>/"
 curl -s http://www.napurkynce.cz/denni-menu/ | awk "$PATTERN" | sed 's/<[^>]*>//g' | sed 's/\&nbsp\;//g'
