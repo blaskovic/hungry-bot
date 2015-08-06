@@ -1,3 +1,6 @@
 #!/bin/env bash
+
+source $(dirname "$0")/func.general
+
 echo "Everest"
-curl -s https://www.zomato.com/cs/brno/everest-veve%C5%99%C3%AD-brno-st%C5%99ed/info | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g'
+getZomato "brno/everest-veve%C5%99%C3%AD-brno-st%C5%99ed/info"
