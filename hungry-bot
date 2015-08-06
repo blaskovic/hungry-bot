@@ -1,12 +1,15 @@
 #!/bin/bash
 
+
 # Args
 CHANNEL=${CHANNEL:-"##pivo"}
 SERVER=${SERVER:-"irc.freenode.org"}
 NICK=${NICK:-"cobuduzrat"}
 IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
-SERVER="http://blaskovic.sk:8099/?menu="
+WEBSERVER="http://blaskovic.sk:8099/?menu="
+
+trap SIGINT "echo '/quit' > $IRCDIR/$SERVER/in"
 
 # ii
 set -x
@@ -31,7 +34,9 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
             # We want menu! # strip whitespace needed!
             menu=$(echo "$mesg" | sed "s/menu //")
 
-            curl "${SERVER}$menu" > "$IRCDIR/$SERVER/$CHANNEL/in"
+            out=$(curl "${WEBSERVER}$menu")
+            echo "$out"
+            echo "$out" > "$IRCDIR/$SERVER/$CHANNEL/in"
         fi
     done
 
