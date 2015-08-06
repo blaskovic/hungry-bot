@@ -5,9 +5,87 @@
 # source $(dirname "$0")/func.general
 #
 
+# Usage:
+# getZomato "brno/name-of-restaurant"
 function getZomato()
 {
     #curl -s "https://www.zomato.com/cs/$1"# | grep -A1 'tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g'
     curl -s "https://www.zomato.com/cs/$1" | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g'
 }
 
+# Usage:
+# some | parsing | valueFromHref
+function valueFromHref()
+{
+    sed -n 's/.*href="\([^"]*\).*/\1/p'
+}
+
+# Usage:
+# todayCZ # returns CZ day
+function todayCZ()
+{
+    TODAY=$(LC=C date "+%A")
+
+    case "$TODAY" in
+    Monday)
+        TODAY_CZ="Pondělí"
+        ;;
+    Tuesday)
+        TODAY_CZ="Úterý"
+        ;;
+    Wednesday)
+        TODAY_CZ="Středa"
+        ;;
+    Thursday)
+        TODAY_CZ="Čtvrtek"
+        ;;
+    Friday)
+        TODAY_CZ="Pátek"
+        ;;
+    Saturday)
+        TODAY_CZ="Sobota"
+        ;;
+    Sunday)
+        TODAY_CZ="Neděle"
+        ;;
+    *)
+        TODAY_CZ="error"
+        ;;
+    esac
+
+    echo "$TODAY_CZ"
+}
+
+function tomorrowCZ()
+{
+    TODAY=$(LC=C date "+%A")
+
+    case "$TODAY" in
+    Monday)
+        TOMORROW_CZ="Úterý"
+        ;;
+    Tuesday)
+        TOMORROW_CZ="Středa"
+        ;;
+    Wednesday)
+        TOMORROW_CZ="Čtvrtek"
+        ;;
+    Thursday)
+        TOMORROW_CZ="Pátek"
+        ;;
+    Friday)
+        TOMORROW_CZ="Sobota"
+        ;;
+    Saturday)
+        TOMORROW_CZ="Neděle"
+        ;;
+    Sunday)
+        TOMORROW_CZ="Pondělí"
+        ;;
+    *)
+        TOMORROW_CZ="error"
+        ;;
+    esac
+
+    echo "$TOMORROW_CZ"
+}
