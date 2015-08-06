@@ -12,7 +12,7 @@ class HungryBot(object):
             out = subprocess.Popen(script, shell=True, stdout=subprocess.PIPE).stdout.read()
             return out
         else:
-            return "This menu does not exists"
+            return "Menu " + str(menu) + " does not exist. Use 'menu list' for the list or submit a patch: https://github.com/blaskovic/hungry-bot"
 
     index.exposed = True
 
