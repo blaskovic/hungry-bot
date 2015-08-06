@@ -1,0 +1,12 @@
+# vim: filetype=sh
+
+#
+# Include this file with:
+# source $(dirname "$0")/func.general
+#
+
+function getZomato()
+{
+    curl -s "https://www.zomato.com/cs/$1" | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g'
+}
+
