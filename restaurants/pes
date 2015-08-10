@@ -39,7 +39,7 @@ grep -A 15 "$TODAY_CZ" "$tmp/pes.txt" > $tmp/day_parsed
 while read line
 do
     # Out of day section
-    echo "$line" | grep -q "___________" 2>/dev/null
+    [ -z "$line" ]
     if [ $? -eq 0 ]
     then
         break
