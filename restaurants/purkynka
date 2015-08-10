@@ -1,27 +1,26 @@
 #!/bin/bash
 echo "Na Purkynce"
 TODAY=$(LC=C date "+%A")
+BEG_PATTERN="<br \/>"
+END_PATTERN="<end>"
 
 case "$TODAY" in
 Monday)
+    BEG_PATTERN="<pre>"
     TODAY_CZ="PONDĚLÍ"
-    END_PATTERN="<p>\&nbsp\;<\/p>"
     ;;
 Tuesday)
     TODAY_CZ="ÚTERÝ"
-    END_PATTERN="<p>\&nbsp\;<\/p>"
     ;;
 Wednesday)
     TODAY_CZ="STŘEDA"
-    END_PATTERN="<p>\&nbsp\;<\/p>"
     ;;
 Thursday)
     TODAY_CZ="ČTVRTEK"
-    END_PATTERN="<p>\&nbsp\;<\/p>"
     ;;
 Friday)
+    END_PATTERN="<\/pre>"
     TODAY_CZ="PÁTEK"
-    END_PATTERN="<p style=\"width: 100%; text-align: right; padding-bottom: 0px;\">"
     ;;
 *)
     echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
@@ -29,5 +28,6 @@ Friday)
     exit 0
 esac
 
-PATTERN="/<div>$TODAY_CZ/,/<div>&nbsp;<\/div>/"
-curl -s http://www.napurkynce.cz/denni-menu/ | awk "$PATTERN" | sed 's/<[^>]*>//g' | sed 's/\&nbsp\;//g'
+PATTERN="/$BEG_PATTERN$TODAY_CZ/,/$END_PATTERN/"
+curl -s http://www.napurkynce.cz/denni-menu/ | sed 's/<br \/><br \/>/<end>\n<br \/>/g' | awk "$PATTERN" | sed 's/^<br \/>//' | sed 's/<br \/>/\n/g' | sed 's/<[^>]*>//g'
+
