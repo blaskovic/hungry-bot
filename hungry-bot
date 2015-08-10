@@ -1,11 +1,15 @@
 #!/bin/bash
 
+
 # Args
 CHANNEL=${CHANNEL:-"##pivo"}
 SERVER=${SERVER:-"irc.freenode.org"}
 NICK=${NICK:-"cobuduzrat"}
 IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
+WEBSERVER="http://blaskovic.sk:8099/?menu="
+
+trap SIGINT "echo '/quit' > $IRCDIR/$SERVER/in"
 
 # ii
 set -x
@@ -27,16 +31,12 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
         echo "$mesg" | grep -q ^menu
         if [ $? -eq 0 ]
         then
-            # We want menu! # stip whitespace needed!
+            # We want menu! # strip whitespace needed!
             menu=$(echo "$mesg" | sed "s/menu //")
 
-            ls "restaurants/$menu"
-            if [ $? -eq 0 ]
-            then
-                ./restaurants/$menu > "$IRCDIR/$SERVER/$CHANNEL/in"
-            else
-                echo "Nebudes zrat '$menu', neviem ako to parsovat. Patches welcome!" > "$IRCDIR/$SERVER/$CHANNEL/in"
-            fi
+            out=$(curl "${WEBSERVER}$menu")
+            echo "$out"
+            echo "$out" > "$IRCDIR/$SERVER/$CHANNEL/in"
         fi
     done
 

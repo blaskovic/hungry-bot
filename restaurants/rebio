@@ -1,0 +1,33 @@
+#!/bin/env bash
+
+source $(dirname "$0")/func.general
+
+tmp=$(mktemp -d)
+
+echo "Rebio - tech park"
+pdf_file=$(curl -s http://www.rebio.cz/Rebio-Park/Nase-nabidka/gn-ha.folder.aspx | grep '(PDF)' | grep 'CZ' | valueFromHref)
+pdf_url="http://www.rebio.cz/Rebio-Park/Nase-nabidka/$pdf_file"
+
+wget -q "$pdf_url" -O $tmp/rebio.pdf
+
+pdftotext $tmp/rebio.pdf
+
+grep -A50 $(todayCZ) $tmp/rebio.txt | grep -v \
+-e 'Polévka:' \
+-e 'Menu I' \
+-e 'včetně nápoje' \
+-e 'Salát:' \
+-e 'Sladké jídlo:' \
+-e 'Dezert:' \
+-e 'Specialita:' \
+-e 'Obsahuje Basic menu včetně polévky plus:' \
+-e 'Kč' \
+-e 'dle denní nabídky' \
+-e 'Informace o alergenech' \
+-e 'Těstovinový salát' \
+-e 'Basic menu' \
+-e "$(todayCZ)" |
+sed -e "/$(tomorrowCZ)/,\$d"
+
+rm -rf "$tmp"
+
