@@ -34,25 +34,13 @@ Friday)
     exit 0
 esac
 
-grep -A 15 "$TODAY_CZ" "$tmp/pes.txt" > $tmp/day_parsed
-
-while read line
-do
-    # Out of day section
-    [ -z "$line" ]
-    if [ $? -eq 0 ]
-    then
-        break
-    fi
-
-    # Long enough? Food!
-    if [ ${#line} -gt 6 ]
-    then
+while read line; do
+    echo "$line" | grep -q -P "^[[:space:]]*($TODAY_CZ|[0-9])"
+    if [[ $? -eq 0 ]]; then
         echo "$line"
+    else
+        break;
     fi
-
-
-done < "$tmp/day_parsed"
+done <<< "$(awk "/$TODAY_CZ/,0" "$tmp/pes.txt")"
 
 rm -rf "$tmp"
-
