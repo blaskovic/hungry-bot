@@ -32,7 +32,7 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
         if [ $? -eq 0 ]
         then
             # We want menu! # strip whitespace needed!
-            menu=$(echo "$mesg" | sed "s/menu //")
+            menu=$(echo "$mesg" | sed "s/menu //" | sed -e 's/[^-a-z0-9]//g')
 
             out=$(curl "${WEBSERVER}$menu")
             echo "$out"
