@@ -28,11 +28,11 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
     while read -r date time nick mesg; do
         nick="${nick#<}"
         nick="${nick%>}"
-        echo "$mesg" | grep -q ^menu
+        echo "$mesg" | grep -q -e ^menu -e "^$NICK:"
         if [ $? -eq 0 ]
         then
             # We want menu! # strip whitespace needed!
-            menu=$(echo "$mesg" | sed "s/menu //" | sed -e 's/[^-a-z0-9]//g')
+            menu=$(echo "$mesg" | sed "s/menu //" | sed "s/$NICK: //" | sed -e 's/[^-a-zA-Z0-9]//g')
 
             out=$(curl "${WEBSERVER}$menu")
             echo "$out"
