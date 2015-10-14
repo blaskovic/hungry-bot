@@ -2,9 +2,9 @@
 
 
 # Args
-CHANNEL=${CHANNEL:-"#roflcoptr"}
+CHANNEL=${CHANNEL:-"##pivo"}
 SERVER=${SERVER:-"irc.freenode.org"}
-NICK=${NICK:-"cobuduzrakua"}
+NICK=${NICK:-"cobuduzrat"}
 IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
 WEBSERVER="http://blaskovic.sk:8099/?menu="
