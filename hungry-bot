@@ -9,7 +9,7 @@ IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
 WEBSERVER="http://blaskovic.sk:8099/?menu="
 
-trap SIGINT "echo '/quit' > $IRCDIR/$SERVER/in"
+trap "echo '/quit' > $IRCDIR/$SERVER/in"  SIGINT
 
 # ii
 set -x
@@ -35,8 +35,16 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
             menu=$(echo "$mesg" | sed "s/menu //" | sed "s/$NICK: //" | sed -e 's/[^-a-zA-Z0-9]//g')
 
             out=$(curl "${WEBSERVER}$menu")
-            echo "$out"
-            echo "$out" > "$IRCDIR/$SERVER/$CHANNEL/in"
+            echo "$out" 
+            
+            i=0
+            while read -r line; do
+                ((i++))
+                if [ $i -gt 11 ] && [[ $SERVER == *"freenode"* ]]; then # freenode anti-anti-spam
+                    sleep 2
+                fi
+                echo "$line" > "$IRCDIR/$SERVER/$CHANNEL/in"
+            done <<< "$out"
         fi
     done
 
