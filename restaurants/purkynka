@@ -28,6 +28,24 @@ Friday)
     exit 0
 esac
 
-PATTERN="/$BEG_PATTERN$TODAY_CZ/,/$END_PATTERN/"
-curl -s http://www.napurkynce.cz/denni-menu/ | sed 's/<br \/><br \/>/<end>\n<br \/>/g' | awk "$PATTERN" | sed 's/^<br \/>//' | sed 's/<br \/>/\n/g' | sed 's/<[^>]*>//g'
+#PATTERN="/$BEG_PATTERN$TODAY_CZ/,/$END_PATTERN/"
+#curl -s http://www.napurkynce.cz/denni-menu/ | sed 's/<br \/><br \/>/<end>\n<br \/>/g' | awk "$PATTERN" | sed 's/^<br \/>//' | sed 's/<br \/>/\n/g' | sed 's/<[^>]*>//g'
 
+curl -s http://www.napurkynce.cz/denni-menu/ | awk -v day=$TODAY_CZ '
+BEGIN {
+    begrx = "<div>"day":.+?</div>";
+}
+match($0, begrx) {
+    lf = 1;
+}
+match($0, /<div>(<span>)?([a-z]\).[^<]+)(<\/span>)?<\/div>/, m) {
+    res[NR] = m[2];
+}
+/(<div>&nbsp;|<\/div><pre>)/ {
+    if(lf == 1) {
+        for(i in res) print res[i];
+    }
+
+    delete res;
+    lf = 0;
+}'
