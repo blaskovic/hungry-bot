@@ -41,7 +41,7 @@ match($0, begrx) {
 match($0, /<div>(<span>)?([a-z]\).[^<]+)(<\/span>)?<\/div>/, m) {
     res[NR] = m[2];
 }
-/(<div>&nbsp;|<\/div><pre>)/ {
+/(<div>&nbsp;|<pre>.*<\/pre>)/ {
     if(lf == 1) {
         for(i in res) print res[i];
     }
