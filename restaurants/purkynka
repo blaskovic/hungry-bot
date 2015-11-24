@@ -33,9 +33,10 @@ esac
 
 curl -s http://www.napurkynce.cz/denni-menu/ | awk -v day=$TODAY_CZ '
 BEGIN {
-    begrx = "<div>"day":.+?</div>";
+    begrx = "<div>("day":.+?)</div>";
 }
-match($0, begrx) {
+match($0, begrx, m) {
+    res[NR] = m[1];
     lf = 1;
 }
 match($0, /<div>(<span>)?([a-z]\).[^<]+)(<\/span>)?<\/div>/, m) {
