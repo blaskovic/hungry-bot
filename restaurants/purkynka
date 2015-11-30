@@ -34,32 +34,45 @@ esac
 curl -s http://www.napurkynce.cz/denni-menu/ | awk -v day=$TODAY_CZ '
 BEGIN {
     idx = 0;
+    lf = 0;
 
     # Template 1
-    #begrx = "<div>("day":.+?)</div>";
-    #midrx = "<div>(<span>)?([a-z]\\).[^<]+)(</span>)?</div>";
-    #endrx = "(<div>&nbsp;|<pre>.*<\/pre>)";
-    #begidx = 1;
-    #mididx = 2;
+    t["template1"]["begrx"] = "<div>("day":.+?)</div>";
+    t["template1"]["midrx"] = "<div>(<span>)?([a-z]\\).[^<]+)(</span>)?</div>";
+    t["template1"]["endrx"] = "(<div>&nbsp;|<pre>.*</pre>)";
+    t["template1"]["begidx"] = 1;
+    t["template1"]["mididx"] = 2;
 
     # Template 2
-    RS="<br />";
-    begrx = "(<pre>)?("day":.+?)";
-    midrx = "^([a-z]\\).[^<]+)";
-    endrx = "^$"
-    begidx = 2;
-    mididx = 1;
+    t["template2"]["RS"] ="<br />";
+    t["template2"]["begrx"] = "(<pre>)?("day":.+?)";
+    t["template2"]["midrx"] = "^([a-z]\\).[^<]+)";
+    t["template2"]["endrx"] = "^$"
+    t["template2"]["begidx"] = 2;
+    t["template2"]["mididx"] = 1;
+
+    # Selected template
+    ctp = "template2";
+
+    if(!(ctp in t)) {
+        print "Invalid template: " ctp;
+        exit 1;
+    }
+
+    if("RS" in t[ctp])
+        RS = t[ctp]["RS"];
 }
-match($0, begrx, m) {
-    res[idx++] = m[begidx];
+match($0, t[ctp]["begrx"], m) {
+    res[idx++] = m[t[ctp]["begidx"]];
     lf = 1;
 }
-match($0, midrx, m) {
-    res[idx++] = m[mididx];
+match($0, t[ctp]["midrx"], m) {
+    res[idx++] = m[t[ctp]["mididx"]];
 }
-match($0, endrx) {
+match($0, t[ctp]["endrx"]) {
     if(lf == 1) {
         for(i in res) print res[i];
+        exit 0;
     }
 
     delete res;
