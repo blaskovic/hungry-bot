@@ -30,11 +30,20 @@ esac
 
 #PATTERN="/$BEG_PATTERN$TODAY_CZ/,/$END_PATTERN/"
 #curl -s http://www.napurkynce.cz/denni-menu/ | sed 's/<br \/><br \/>/<end>\n<br \/>/g' | awk "$PATTERN" | sed 's/^<br \/>//' | sed 's/<br \/>/\n/g' | sed 's/<[^>]*>//g'
+TMPFILE="purkynka.out"
+curl -s http://www.napurkynce.cz/denni-menu/ > $TMPFILE
 
-curl -s http://www.napurkynce.cz/denni-menu/ | awk -v day=$TODAY_CZ '
+awk -v day=$TODAY_CZ '
+function linecount(file) {
+    if(file == " ")
+        exit 1;
+
+    "wc -l " file | getline out
+    split(out, s, " ");
+    return s[1];
+}
 BEGIN {
-    idx = 0;
-    lf = 0;
+    rs_bak = RS;
 
     # Template 1
     t["template1"]["begrx"] = "<div>("day":.+?)</div>";
@@ -51,8 +60,17 @@ BEGIN {
     t["template2"]["begidx"] = 2;
     t["template2"]["mididx"] = 1;
 
+    maxtp = length(t);
+    tpid = 1;
+}
+FNR == 1 {
+    lc = linecount(ARGV[1]);
+    idx = 0;
+    lf = 0;
+    out = 0;
+
     # Selected template
-    ctp = "template2";
+    ctp = "template" tpid;
 
     if(!(ctp in t)) {
         print "Invalid template: " ctp;
@@ -61,6 +79,8 @@ BEGIN {
 
     if("RS" in t[ctp])
         RS = t[ctp]["RS"];
+    else
+        RS = rs_bak;
 }
 match($0, t[ctp]["begrx"], m) {
     res[idx++] = m[t[ctp]["begidx"]];
@@ -71,11 +91,44 @@ match($0, t[ctp]["midrx"], m) {
 }
 match($0, t[ctp]["endrx"]) {
     if(lf == 1) {
-        for(i in res) print res[i];
+        out = 1;
+        for(i in res) {
+            # Limit output to 7 lines
+            if(i >= 7) break;
+            print res[i];
+        }
         exit 0;
     }
 
     delete res;
     lf = 0;
     idx = 0;
-}'
+}
+FNR == lc {
+    # EOF
+    # We tried all templates -> error
+    if(tpid == maxtp)
+        exit 1;
+
+    # Set current file as next argument
+    for(i = ARGC; i > ARGIND; i--)
+        ARGV[i] = ARGV[i - 1];
+
+    ARGC++;
+    ARGV[ARGIND + 1] = FILENAME;
+
+    # Switch to next template
+    tpid++;
+
+    delete res;
+
+    nextfile;
+}
+END {
+    if(out == 0) {
+        print "No matching template";
+        exit 1;
+    }
+}' $TMPFILE
+
+rm $TMPFILE
