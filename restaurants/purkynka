@@ -92,7 +92,11 @@ match($0, t[ctp]["midrx"], m) {
 match($0, t[ctp]["endrx"]) {
     if(lf == 1) {
         out = 1;
-        for(i in res) {
+        # gawk on RHEL has interesting implementation
+        # of for(x in y) loop
+        #for(i in res) {
+
+        for(i = 0; i < length(res); i++) {
             # Limit output to 7 lines
             if(i >= 7) break;
             print res[i];
