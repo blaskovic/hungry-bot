@@ -92,10 +92,9 @@ match($0, t[ctp]["midrx"], m) {
 match($0, t[ctp]["endrx"]) {
     if(lf == 1) {
         out = 1;
-        # gawk on RHEL has interesting implementation
-        # of for(x in y) loop
-        #for(i in res) {
-
+        # Arrays in awk/gawk are not necessarily stored
+        # in the order from the original source,
+        # thus for(x in arr) may have weird output
         for(i = 0; i < length(res); i++) {
             # Limit output to 7 lines
             if(i >= 7) break;
