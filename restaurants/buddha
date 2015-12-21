@@ -1,0 +1,48 @@
+#!/bin/bash
+echo "Buddha"
+TODAY=$(LC=C date "+%A")
+
+case "$TODAY" in
+Monday)
+    TODAY_CZ="PONDĚLÍ"
+    ;;
+Tuesday)
+    TODAY_CZ="ÚTERÝ"
+    ;;
+Wednesday)
+    TODAY_CZ="STŘEDA"
+    ;;
+Thursday)
+    TODAY_CZ="ČTVRTEK"
+    ;;
+Friday)
+    TODAY_CZ="PÁTEK"
+    ;;
+*)
+    echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
+    exit 0
+esac
+
+curl -s http://buddhabrno.cz/index.html | tr -d '\r\n' | awk -v day=$TODAY_CZ '
+function ltrim(s) {
+    sub(/^[ \t\r\n]+/, "", s);
+    return s;
+}
+BEGIN {
+    RS = "</br>";
+    ORS = "\n";
+    im = 0;
+    rx = "<span class=\"vyrazne\">[ ]*" day ".*?$";
+}
+match($0, rx) {
+    im = 1;
+    next;
+}
+/^.+[0-9]+\,\-.*?$/ {
+    if(im == 1)
+        print ltrim($0);
+}
+!/^.+[0-9]+\,\-.*?$/ {
+    if(im == 1)
+        exit 0;
+}'
