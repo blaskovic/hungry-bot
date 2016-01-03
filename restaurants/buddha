@@ -30,7 +30,6 @@ function ltrim(s) {
 }
 BEGIN {
     RS = "</br>";
-    ORS = "\n";
     im = 0;
     rx = "<span class=\"vyrazne\">[ ]*" day ".*?$";
 }
