@@ -1,5 +1,4 @@
 <?php
-
 $menu = preg_replace("/[^0-9\-\w]+/", "", $_GET['menu']);
 
 if(!file_exists('../restaurants/'.$menu))
@@ -8,5 +7,6 @@ if(!file_exists('../restaurants/'.$menu))
 }
 else
 {
-    echo exec("../restaurants/".$menu);
+    $cmd = "../restaurants/".$menu;
+    echo shell_exec($cmd);
 }
