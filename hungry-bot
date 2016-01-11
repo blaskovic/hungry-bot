@@ -7,7 +7,7 @@ SERVER=${SERVER:-"irc.freenode.org"}
 NICK=${NICK:-"cobuduzrat"}
 IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
-WEBSERVER="http://blaskovic.sk:8099/?menu="
+WEBSERVER="http://vps2.blaskovic.sk:8099/?menu="
 
 trap "echo '/quit' > $IRCDIR/$SERVER/in"  SIGINT
 
