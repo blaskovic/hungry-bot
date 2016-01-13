@@ -8,8 +8,9 @@ NICK=${NICK:-"cobuduzrat"}
 IRCDIR=${IRCDIR:-"ircdir"}
 TMPFILE=$(mktemp)
 WEBSERVER="http://vps2.blaskovic.sk:8099/?menu="
+LOOP=true
 
-trap "echo '/quit' > $IRCDIR/$SERVER/in"  SIGINT
+trap "LOOP=false; echo '/quit' > $IRCDIR/$SERVER/in; sleep 2; exit 0"  SIGINT
 
 # ii
 set -x
@@ -17,14 +18,26 @@ make -C ii
 rm -rfv "$IRCDIR/$SERVER"
 set +x
 ./ii/ii -i "$IRCDIR" -s "$SERVER" -n "$NICK" &
-sleep 5
+
+while [ ! -d "$IRCDIR/$SERVER" ]; do
+    echo "Server's still processing our connection..."
+    sleep 5
+done
 echo "/j $CHANNEL" > "$IRCDIR/$SERVER/in"
 
 sleep 2
 
 # Parser
-echo > "$IRCDIR/$SERVER/$CHANNEL/out"
-tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
+while $LOOP; do
+    change="$(inotifywait -q -e create,modify --format "%e %w%f" -r "$IRCDIR/$SERVER")"
+    event=(${change})
+
+    if [[ "${event[1]}" =~ /out$ ]]; then
+        x="$(echo ${event[1]} | sed -r 's|^(.*?)/out$|\1|')"
+        event[1]="$x";
+    fi
+
+    cnt=0;
     while read -r date time nick mesg; do
         nick="${nick#<}"
         nick="${nick%>}"
@@ -36,18 +49,20 @@ tail -f "$IRCDIR/$SERVER/$CHANNEL/out" | \
 
             out=$(curl "${WEBSERVER}$menu")
             echo "$out" 
-            
+
             i=0
             while read -r line; do
                 ((i++))
                 if [ $i -gt 11 ] && [[ $SERVER == *"freenode"* ]]; then # freenode anti-anti-spam
                     sleep 2
                 fi
-                echo "$line" > "$IRCDIR/$SERVER/$CHANNEL/in"
+                echo "$line" > "${event[1]}/in"
             done <<< "$out"
         fi
-    done
-
+       ((cnt++))
+    done < "${event[1]}/out"
+    sed -i'' "1,$cnt d" "${event[1]}/out"
+done
 
 # End
 rm $TMPFILE
