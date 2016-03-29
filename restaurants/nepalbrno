@@ -25,12 +25,8 @@ esac
 
 UA="Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0"
 curl -s -A "$UA" http://nepalbrno.cz/weekly-menu/ | 
-sed -e ':a;N;$!ba;s/<br \/>\n/ /g'| sed -e 's/\&\#[0-9]*\;//g' |
+sed -e ':a;N;$!ba;s/<br \/>\n/ /g' | sed -e 's/\&\#[0-9]*\;//g' |
 awk -v day=$TODAY_CZ '
-function ltrim(s) {
-    sub(/^[ \t\r\n]+/, "", s);
-    return s;
-}
 BEGIN {
     im = 0;
     rx = "^.*?<strong>" day ".*?$";
