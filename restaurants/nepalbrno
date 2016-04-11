@@ -29,7 +29,8 @@ sed -e ':a;N;$!ba;s/<br \/>\n/ /g' | sed -e 's/\&\#[0-9]*\;//g' |
 awk -v day=$TODAY '
 BEGIN {
     im = 0;
-    rx = "^.*?<strong>.*?/" day ".*?$";
+    IGNORECASE = 1
+    rx = "^.*?<strong>.*" day ".*?$";
     str = "";
 }
 match($0, rx) {
