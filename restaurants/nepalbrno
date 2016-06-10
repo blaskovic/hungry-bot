@@ -37,13 +37,13 @@ match($0, rx) {
     im = 1;
     next;
 }
-match($0, "<td>([^<]+?)</td>$", m) {
+match($0, "<td>([^<]+?)(</td>)?$", m) {
     if(im == 1)
-        str = m[1]
+        str = m[1];
 }
 match($0, "<td><strong>(.+)</strong></td>", m) {
     if(im == 1)
-        print str " " m[1]
+        print str " " m[1];
 }
 /^<td (style|colspan).*$/ {
     if(im == 1)
