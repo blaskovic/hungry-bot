@@ -2,27 +2,6 @@
 echo "Nepal Brno"
 TODAY=$(LC=C date "+%A")
 
-case "$TODAY" in
-Monday)
-    TODAY_CZ="PONDĚLÍ"
-    ;;
-Tuesday)
-    TODAY_CZ="ÚTERÝ"
-    ;;
-Wednesday)
-    TODAY_CZ="STŘEDA"
-    ;;
-Thursday)
-    TODAY_CZ="ČTVRTEK"
-    ;;
-Friday)
-    TODAY_CZ="PÁTEK"
-    ;;
-*)
-    echo "Dnes je $TODAY, neni menu alebo je nieco spatne."
-    exit 0
-esac
-
 UA="Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0"
 curl -s -A "$UA" http://nepalbrno.cz/weekly-menu/ | 
 sed -e ':a;N;$!ba;s/<br \/>\n/ /g' | sed -e 's/\&\#[0-9]*\;//g' |
@@ -37,7 +16,7 @@ match($0, rx) {
     im = 1;
     next;
 }
-match($0, "<td>([^<]+?)(</td>)?$", m) {
+match($0, "<td>([^<]+)", m) {
     if(im == 1)
         str = m[1];
 }
