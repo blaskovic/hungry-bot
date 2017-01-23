@@ -10,7 +10,7 @@
 function getZomato()
 {
     #curl -s "https://www.zomato.com/cs/$1"# | grep -A1 'tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g'
-    curl --http2 -s "https://www.zomato.com/cs/$1" | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g' | head -n8
+    curl --http2 -L -s "https://www.zomato.com/cs/$1" | grep -A1 'tmi-price\|tmi-name' | sed -e 's/<div[^>]*>//g' -e 's/^\s*//g' -e '$!N;s/\n/ /' | grep -v '^--\s*' | sed -e '$!N;s/\n/ /' -e 's/^\s*//g' -e 's/ --\s*$//g' -e 's/\s\+/ /g' | sed 's;</\?span[^>]*>;;g' | head -n8
 }
 
 # Usage:

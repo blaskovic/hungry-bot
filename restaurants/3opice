@@ -3,4 +3,4 @@
 source $(dirname "$0")/func.general
 
 echo "U 3 opic"
-getZomato "brno/u-3-opic-kr%C3%A1lovo-pole-brno-sever/info" | grep -B 10 'Speciální nabídka' | head -n -1
+getZomato "brno/u-3-opic-kr%C3%A1lovo-pole-brno-sever/daily-menu"
