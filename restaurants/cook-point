@@ -1,0 +1,13 @@
+#!/bin/env bash
+
+source $(dirname "$0")/func.general
+
+echo "Cook Point - tech park"
+getFromOskutka "Cookpoint" |
+ grep -oP '(?<=<div class="hpbox first">).*?(</table>)' |
+ sed -s 's/<h1>Denní menu<\/h1><table><tr><td><strong class="mname">//' |
+ sed -e 's/<\/td><\/tr><tr><td><strong class="mname">/\n/g' |
+ sed -s 's/<\/small><\/td><td class="price">/ /g' |
+ sed -s 's/&nbsp;/ /g' |
+ sed -s 's/<\/td><\/tr><\/table>//' |
+ sed -s 's/<\/strong><br \/><small><strong>[0-9,gl]*<\/strong>//g'
