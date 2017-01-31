@@ -5,6 +5,11 @@
 # source $(dirname "$0")/func.general
 #
 
+function getFromOskutka()
+{
+  curl --http2 -L -s "http://rhlp-oskutka.rhcloud.com/$1" | sed -e 's/<pre>//' | sed -e 's/<\/pre>//'
+}
+
 # Usage:
 # getZomato "brno/name-of-restaurant"
 function getZomato()
