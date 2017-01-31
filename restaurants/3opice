@@ -3,4 +3,10 @@
 source $(dirname "$0")/func.general
 
 echo "U 3 opic"
-getZomato "brno/u-3-opic-kr%C3%A1lovo-pole-brno-sever/daily-menu"
+getFromOskutka "Opice" |
+sed 's/<div class="menu-item col-sm-12 col-xs-12 starter"><div class="clearfix menu-wrapper"><h4>/\n/g' |
+sed -s 's/<\/div>//g' |
+sed 's/<\/h4>//g' |
+sed -s 's/<span class="price">//g' |
+sed -s 's/<\/span>//g' |
+sed -s 's/<div class="dotted-bg">//g'
