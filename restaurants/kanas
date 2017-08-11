@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -s 'http://www.kanas.cz/' | grep 'class="jidlo"' | awk -F'>' '{print $2}' | awk -F'<' '{print $1}'
