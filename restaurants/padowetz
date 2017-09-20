@@ -2,29 +2,30 @@
 # vim: set ts=2 sw=2 et fileencoding=utf-8:
 
 import urllib2
-import datetime
 import re
 try: 
   from BeautifulSoup import BeautifulSoup
 except ImportError:
   from bs4 import BeautifulSoup
 
-
 response = urllib2.urlopen('http://www.restaurant-padowetz.cz/poledni-menu.htm')
 html = response.read()
 parsed_html = BeautifulSoup(html)
-menu =  parsed_html.body.find('div', attrs={'class':'tydeniMenu '})
-print 'Polévky:'
+menu = parsed_html.body.find('div', attrs={'class':'tydeniMenu '})
+print('Restaurant & Pub Padowetz')
+print('Polévky:')
 for line in menu.find('table', attrs={'class':'jidelnicek', 'id':'t_Polevky'}):
   for cell in line:
     if re.match(r'^nazev[0-9]+.*', cell.attrs[0][1]):
-        print(cell.text)
+        print(re.sub('\([^)]+\)', '', cell.text).strip())
 
-print 'Hlavní chod:'
+print('Hlavní chod:')
 for line in menu.find('table', attrs={'class':'jidelnicek', 'id':'t_Hlavni-chod'}):
   for cell in line:
     if re.match(r'^nazev[0-9]+.*', cell.attrs[0][1]):
-      nazev =  cell.text
+      nazev =  re.sub('\([^)]+\)', '', cell.text).strip()
     if re.match(r'^cena[0-9]+.*', cell.attrs[0][1]):
       cena = cell.text
-  print('{} - {}'.format(nazev.encode('utf-8'), cena.encode('utf-8')))
+
+  if not re.match(r'.*alergen.*', nazev):
+    print('{} - {}'.format(nazev.encode('utf-8'), cena.encode('utf-8')))
