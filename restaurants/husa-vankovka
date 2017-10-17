@@ -1,0 +1,21 @@
+#!/bin/bash
+
+/usr/bin/sed -n <<< "http://www.potrefenahusabrno.cz/denni-menu" -f <( cat << SED_SCRIPT
+
+1{
+    h;
+    s/^.*$/curl -s/;
+    G;
+    s/\n/ /ge;
+    s/<\/menu>.*$//;
+    s/.*<menu[^>]*>//;
+    s/<\/p>/\n/g;
+    s/<[^>]\+>//g;
+    s/\n\s*\n/\n/g;
+    s/ \+/ /g;
+    p;
+}
+
+SED_SCRIPT
+)
+
