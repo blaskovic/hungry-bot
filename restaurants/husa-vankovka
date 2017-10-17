@@ -16,34 +16,6 @@
     p;
 }
 
-
-
 SED_SCRIPT
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#1{
-#    s@^.*$@curl -s http://www.potrefenahusabrno.cz/denni-menu/@e
-#    s/\n//g;
-#    s@\(<menu\)\|\(</menu>\)@\n@g;
-#    s@<[^>]\+>@ @g
-#    s@[^>]\+>@@g
-#    s@\s\+@ @g
-#    s@Kč@&\n@g
-#    s@DENNÍ NABÍDKA@@
-#    s@\(^\|\n\) \+@\n@g
-#    p
-#}
 
