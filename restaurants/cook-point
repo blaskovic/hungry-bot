@@ -10,4 +10,6 @@ getFromOskutka "Cookpoint" |
  sed -s 's/<\/small><\/td><td class="price">/ /g' |
  sed -s 's/&nbsp;/ /g' |
  sed -s 's/<\/td><\/tr><\/table>//' |
- sed -s 's/<\/strong><br \/><small><strong>[0-9,gl]*<\/strong>//g'
+ sed -s 's/<\/strong><br \/><small><strong>[0-9,gl]*<\/strong>//g' |
+ sed -s 's#</strong><br /><small><strong>##g' |
+ sed -s 's#</strong>##g'

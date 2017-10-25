@@ -9,7 +9,7 @@
 # getFromOskutka "NameOfRestaurant"
 function getFromOskutka()
 {
-  curl --http2 -L -s "http://rhlp-oskutka.rhcloud.com/$1" | sed -e 's/<pre>//' | sed -e 's/<\/pre>//'
+  curl --http2 -L -s "http://rhlp.skutka.cz/$1" | sed -e 's/<pre>//' | sed -e 's/<\/pre>//'
 }
 
 # Usage:
