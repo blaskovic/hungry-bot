@@ -2,19 +2,19 @@
 echo "Nepal Brno"
 TODAY=$(LC=C date "+%A")
 
-# Override curl's default user agent, as the website has it blocked
-UA="Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0"
 # Replace all <br /> tags with a proper newline, so the menu is formatted correctly
 # and easier to parse (first sed). Also, drop all HTML numeric character references
-# (&#xxxx) so they don't interfere with the parsing process (second sed).
-curl -s -A "$UA" http://nepalbrno.cz/weekly-menu/ | 
-sed -e ':a;N;$!ba;s/<br \/>\n/ /g' | sed -e 's/\&\#[0-9]*\;//g' |
-awk -v day=$TODAY '
+# (&#xxxx) so they don't interfere with the parsing process (second sed), and
+# strip UTF-8 representations of &nbsp; (third sed exp.) to drop empty cells.
+curl -s https://nepalbrno.cz/weekly-menu/ |
+sed -e ':a;N;$!ba;s/<br \/>\n/ /g' | sed -e 's/\&\#[0-9]*\;//g' -e 's/\xa0//g' |
+awk -v day="${TODAY:?}" '
 BEGIN {
     im = 0;
-    IGNORECASE = 1
-    rx = "^.*?<strong>.*" day ".*?$";
+    IGNORECASE = 1;
+    rx = "^<td .*" day ".*?$";
     str = "";
+    mcount = 0;
 }
 
 # Attempt to match the current day. If matched, set im variable to let the rest
@@ -25,20 +25,25 @@ match($0, rx) {
 }
 
 # Match the pre-formatted menu item name & store it
-match($0, "<td[^>]*?>(<b>)?([^<]+)", m) {
-    if(im == 1)
-        str = m[2];
+match($0, "<td .* height=[^>]*?>(<b>)?([^<]+)", m) {
+    mitem = m[2];
+    if (length(mitem) == 0)
+        next;
+
+    if (im == 1)
+        mcount++;
+        str = mitem;
 }
 
 # Match the menu item price & print it alongside the item name
-match($0, "<td><strong>(.+)</strong></td>", m) {
-    if(im == 1)
-        print str " " m[1];
+!/<td .*height=.*/ && match($0, "<td .*<b>(.+)</b></td>", m) {
+    if (im == 1)
+        print str " " m[1]
 }
 
 # Match the end of each daily menu section. If the im variable is set, exit the
 # script, as we went through the entire menu for the current day
-/^<td (style|colspan).*$/ {
+mcount >= 6 || /<\/table>/ {
     if(im == 1)
         exit 0;
 }'
